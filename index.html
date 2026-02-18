@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Tester Application | Apply Now</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        :root {
+            --primary: #00C853;
+            --primary-dark: #009624;
+            --secondary: #2962FF;
+            --text: #1f2937;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        /* Top Bar & Header */
+        .top-bar { background: #333; color: white; text-align: center; padding: 8px; font-size: 0.8rem; font-weight: bold; }
+        .pulse { animation: pulse-animation 2s infinite; display: inline-block; width: 8px; height: 8px; background: #00C853; border-radius: 50%; margin-right: 5px; }
+        header { background: var(--white); padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; font-size: 1.4rem; color: var(--secondary); letter-spacing: -0.5px; }
+        .status-badge { background: #e3f2fd; color: var(--secondary); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+
+        /* Hero & Quiz */
+        .hero { max-width: 600px; margin: 30px auto; padding: 20px; text-align: center; }
+        h1 { font-size: 2.2rem; margin-bottom: 10px; line-height: 1.1; color: #111; }
+        .sub-head { font-size: 1.1rem; color: #555; margin-bottom: 25px; }
+        .highlight { color: var(--secondary); font-weight: 800; }
+        .quiz-container { background: var(--white); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; position: relative; border: 1px solid #e0e0e0; min-height: 300px; }
+        .progress-bar-bg { background: #eee; height: 6px; width: 100%; }
+        .progress-bar-fill { background: var(--primary); height: 100%; width: 33%; transition: width 0.5s ease; }
+        .quiz-content { padding: 30px 20px; }
+        .question-step { display: none; animation: fadeIn 0.4s; }
+        .question-step.active { display: block; }
+        h3.question-title { font-size: 1.3rem; margin-bottom: 20px; color: #222; }
+        
+        /* Buttons */
+        .quiz-btn { display: block; width: 100%; padding: 16px; margin-bottom: 12px; background: var(--white); border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1.1rem; font-weight: 600; color: #444; cursor: pointer; transition: all 0.2s; text-align: left; position: relative; }
+        .quiz-btn:hover { border-color: var(--secondary); background: #f5f9ff; color: var(--secondary); transform: translateX(5px); }
+        .quiz-btn::after { content: '➔'; position: absolute; right: 20px; opacity: 0.3; }
+        .quiz-btn:hover::after { opacity: 1; }
+        .cta-btn { background: var(--primary); color: white; border: none; text-align: center; font-size: 1.3rem; box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4); text-decoration: none; }
+        .cta-btn:hover { background: var(--primary-dark); transform: scale(1.02); color: white; }
+        .cta-btn::after { content: ''; } 
+
+        /* Loading & Footer */
+        .loading-screen { text-align: center; padding: 40px 20px; display: none; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        .trust-row { margin-top: 20px; display: flex; justify-content: center; gap: 15px; opacity: 0.7; }
+        .trust-badge { font-size: 0.7rem; display: flex; align-items: center; color: #666; }
+        .trust-badge span { margin-right: 5px; font-size: 1.2rem; color: var(--primary); }
+        footer { margin-top: 50px; padding: 30px 20px; text-align: center; font-size: 0.75rem; color: #999; border-top: 1px solid #eee; background: white; }
+        .footer-links button { background: none; border: none; color: #777; text-decoration: underline; cursor: pointer; font-size: 0.75rem; margin: 0 8px; }
+        
+        /* Modals */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; width: 90%; max-width: 600px; border-radius: 12px; position: relative; max-height: 80vh; overflow-y: auto; }
+        .close { float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-text h2 { margin-top: 0; color: var(--text); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-text p { margin-bottom: 10px; font-size: 0.9rem; color: #4b5563; text-align: left; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { h1 { font-size: 1.8rem; } .hero { margin-top: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar"><span class="pulse"></span> US Residents: Applications are currently <strong>OPEN</strong></div>
+    <header>
+        <div class="logo">OpinionRewards</div>
+        <div class="status-badge">● Verified Secure</div>
+    </header>
+    <div class="hero">
+        <h1>Turn Your Opinions Into <span class="highlight">Real Rewards</span></h1>
+        <p class="sub-head">We are looking for <strong>35 people</strong> to test apps and take surveys. Answer 3 questions to see if you qualify.</p>
+        <div class="quiz-container">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+            <div class="quiz-content">
+                <!-- STEP 1 -->
+                <div id="step1" class="question-step active">
+                    <h3 class="question-title">Question 1 of 3:</h3>
+                    <p style="margin-bottom: 15px;">Do you have a smartphone or computer with internet access?</p>
+                    <button class="quiz-btn" onclick="nextStep(2)">Yes, I do</button>
+                    <button class="quiz-btn" onclick="nextStep(2)">No, I don't</button>
+                </div>
+                <!-- STEP 2 -->
+                <div id="step2" class="question-step">
+                    <h3 class="question-title">Question 2 of 3:</h3>
+                    <p style="margin-bottom: 15px;">How many hours per week can you dedicate to testing products?</p>
+                    <button class="quiz-btn" onclick="nextStep(3)">1 - 5 Hours</button>
+                    <button class="quiz-btn" onclick="nextStep(3)">5 - 10 Hours</button>
+                    <button class="quiz-btn" onclick="nextStep(3)">10+ Hours</button>
+                </div>
+                <!-- STEP 3 -->
+                <div id="step3" class="question-step">
+                    <h3 class="question-title">Final Question:</h3>
+                    <p style="margin-bottom: 15px;">Are you currently located in the United States?</p>
+                    <button class="quiz-btn" onclick="startLoading()">Yes, I am in the US</button>
+                    <button class="quiz-btn" onclick="startLoading()">No, I am outside the US</button>
+                </div>
+                <!-- LOADING SCREEN -->
+                <div id="loadingStep" class="loading-screen">
+                    <div class="spinner"></div>
+                    <h3 id="loadingText">Checking eligibility...</h3>
+                    <p>Please wait while we match you with offers.</p>
+                </div>
+                <!-- FINAL SUCCESS STEP -->
+                <div id="finalStep" class="question-step">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+                        <h3 class="question-title" style="color: var(--primary); font-weight: 800;">You Qualify!</h3>
+                        <p style="margin-bottom: 20px;">We have found <strong>(3)</strong> available reward programs for you. Spots are held for 5 minutes.</p>
+                        <!-- YOUR LINK -->
+                        <a href="https://smrturl.co/a/s956ce53ee4/576?s1={keyword}" class="quiz-btn cta-btn" rel="nofollow">Claim Your Spot Now &raquo;</a>
+                        <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">No credit card required to join.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="trust-row">
+            <div class="trust-badge"><span>🔒</span> SSL Secure</div>
+            <div class="trust-badge"><span>✓</span> Verified Partner</div>
+            <div class="trust-badge"><span>★</span> 4.9/5 Rating</div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-links">
+            <button onclick="openModal('privacyModal')">Privacy Policy</button> | 
+            <button onclick="openModal('termsModal')">Terms of Service</button> | 
+            <button onclick="openModal('contactModal')">Contact Us</button>
+        </div>
+        <div class="disclaimer">
+            <p><strong>Advertising Disclosure:</strong> This site is a market research rewards aggregator. We are not a part of Facebook or Google Inc. Additionally, this site is NOT endorsed by Facebook or Google in any way. We receive compensation when you complete offers from our partners.</p>
+            <p>Copyright © 2026 OpinionRewards. All Rights Reserved.</p>
+        </div>
+    </footer>
+	    <!-- MODALS -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('privacyModal')">&times;</span>
+            <div class="modal-text">
+                <h2>Privacy Policy</h2>
+                <p><strong>Last Updated: October 2026</strong></p>
+                <p>At OpinionRewards, we respect your privacy. This policy outlines how we handle your data.</p>
+                <p>We do not collect personal information (such as names or emails) directly on this landing page. However, we use third-party tracking cookies to monitor the performance of our advertising campaigns.</p>
+                <p>When you click the button on our site, you will be redirected to our partner network (AdBlueMedia). They may collect information according to their own privacy policies.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('termsModal')">&times;</span>
+            <div class="modal-text">
+                <h2>Terms of Service</h2>
+                <p>By accessing this website, you agree to be bound by these Terms and Conditions.</p>
+                <p>You must be at least 18 years old to use this website and participate in the offers presented.</p>
+                <p>This website is a marketing landing page. We receive financial compensation when you complete a survey or offer provided by our third-party partners.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contactModal')">&times;</span>
+            <div class="modal-text">
+                <h2>Contact Us</h2>
+                <p>If you have questions regarding this website or our advertising practices, please contact us below.</p>
+                <p><strong>Email Support:</strong><br>
+                <a href="mailto:support@yourdomain.com" style="color:blue;">Rewards@getxsp.us</a></p>
+                <p><strong>Mailing Address:</strong><br>
+                33 fremont street]<br>San francisco, CA, 94105</p>
+            </div>
+        </div>
+    </div>
+    <!-- JAVASCRIPT LOGIC (PASTE THIS AT THE BOTTOM) -->
+    <script>
+        // --- QUIZ LOGIC ---
+        
+        function nextStep(stepNumber) {
+            // 1. Hide all steps
+            var steps = document.getElementsByClassName('question-step');
+            for(var i = 0; i < steps.length; i++) {
+                steps[i].style.display = 'none';
+                steps[i].classList.remove('active');
+            }
+
+            // 2. Show the requested step
+            var currentStep = document.getElementById('step' + stepNumber);
+            if(currentStep) {
+                currentStep.style.display = 'block';
+                currentStep.classList.add('active');
+            }
+
+            // 3. Update Progress Bar
+            var progressBar = document.getElementById('progressBar');
+            if(stepNumber == 2) progressBar.style.width = "66%";
+            if(stepNumber == 3) progressBar.style.width = "90%";
+        }
+
+        function startLoading() {
+            // 1. Hide Step 3
+            document.getElementById('step3').style.display = 'none';
+            
+            // 2. Show Loading Screen
+            document.getElementById('loadingStep').style.display = 'block';
+            
+            // 3. Update Progress Bar to 100%
+            document.getElementById('progressBar').style.width = "100%";
+
+            // 4. Wait 2.5 seconds, then show Final Step
+            setTimeout(function() {
+                document.getElementById('loadingStep').style.display = 'none';
+                document.getElementById('finalStep').style.display = 'block';
+            }, 2500);
+        }
+
+
+        // --- MODAL LOGIC (Privacy/Terms/Contact) ---
+
+        function openModal(modalId) {
+            var modal = document.getElementById(modalId);
+            if(modal) {
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden"; // Stop scrolling
+            }
+        }
+
+        function closeModal(modalId) {
+            var modal = document.getElementById(modalId);
+            if(modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Resume scrolling
+            }
+        }
+
+        // Close modal if clicking outside the white box
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+        }
+    </script>
+</body>
+</html>
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        function nextStep(stepNumber) {
+            var steps = document.getElementsByClassName('question-step');
+            for(var i = 0; i < steps.length; i++) {
+                steps[i].style.display = 'none';
